@@ -49,6 +49,15 @@ def unitSelector(temp):
         return str(amout_arr[temp]) + "00g"
 
 
+# 재료를 tree에서 제거
+def delIngredient():
+    curitem = tree.focus()
+    temp = tree.item(curitem)
+    addKcal(-1 * int(temp["values"][2]))
+    amout_arr[int(curitem)] = 1
+    tree.delete(curitem)
+
+
 # 윈도우 생성
 win = Tk()
 win.title("마라탕 계산기")
@@ -113,13 +122,31 @@ lb.select_set(0)
 lb.place(x=900, y=30, width=300, height=440)
 lb.bind("<ButtonRelease>", lbClick)
 
+lb_scroll = Scrollbar(lb, orient="vertical", command=lb.yview)
+lb_scroll.pack(side="right", fill="y")
+lb.configure(yscrollcommand=lb_scroll.set)
+
 # 재료 추가 버튼 생성
 ing_add = Button(win, text="추가", command=addIngredient, font=menu_font)
-ing_add.place(x=900, y=470, width=300, height=30)
+ing_add.place(x=900, y=470, width=150, height=30)
 
-# 추가된 재료란 = 게시판
+# 재료 삭제 버튼 생성
+ing_del = Button(win, text="삭제", command=delIngredient, font=menu_font)
+ing_del.place(x=1050, y=470, width=150, height=30)
+
+# 추가된 재료란 게시판
+tree_style = ttk.Style()
+tree_style.configure(
+    "mystyle.Treeview",
+    highlightthickness=0,
+    bd=0,
+    font=("Malgun Gothic", 14),
+    rowheight=30,
+)
+tree_style.configure("mystyle.Treeview.Heading", font=("Malgun Gothic", 16, "bold"))
+
 columns = ("1", "2", "3")
-tree = ttk.Treeview(win, columns=columns, show="headings")
+tree = ttk.Treeview(win, columns=columns, show="headings", style="mystyle.Treeview")
 tree.column("1", width=600, stretch=NO, anchor=CENTER)
 tree.column("2", width=300, stretch=NO, anchor=CENTER)
 tree.column("3", width=300, stretch=NO, anchor=CENTER)
@@ -128,6 +155,10 @@ tree.heading(1, text="선택 재료", anchor=CENTER)
 tree.heading(2, text="분량", anchor=CENTER)
 tree.heading(3, text="칼로리", anchor=CENTER)
 tree.place(x=0, y=500, width=1200, height=300)
+
+tree_scroll = Scrollbar(tree, orient="vertical", command=tree.yview)
+tree_scroll.pack(side="right", fill="y")
+tree.configure(yscrollcommand=tree_scroll.set)
 
 # 총 칼로리
 menu_font2 = ("Malgun Gothic", 20, "bold")
