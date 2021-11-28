@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import font
 from typing import List
+import random
 
 # 재료 이미지 변경 함수
 def makeImg(i):
@@ -20,8 +21,9 @@ def lbClick(event):
 def addIngredient():
     temp = lb.curselection()[0]
     name = ing_name[temp]
-    kcal = ing.get(name)
+    kcal = ing_dic.get(name)
     addKcal(kcal)
+    exerciseTime()
     ingExist(temp, name, kcal)
 
 
@@ -51,11 +53,21 @@ def unitSelector(temp):
 
 # 재료를 tree에서 제거
 def delIngredient():
-    curitem = tree.focus()
-    temp = tree.item(curitem)
-    addKcal(-1 * int(temp["values"][2]))
-    amout_arr[int(curitem)] = 1
-    tree.delete(curitem)
+    while tree.focus():
+        curitem = tree.focus()
+        temp = tree.item(curitem)
+        addKcal(-1 * int(temp["values"][2]))
+        exerciseTime()
+        amout_arr[int(curitem)] = 1
+        tree.delete(curitem)
+
+
+# 칼로리 비례 필요 운동시간 계산
+def exerciseTime():
+    temp = random.randint(0, len(exercise_name) - 1)
+    exName = exercise_name[temp]
+    exTime = int(exercise_dic.get(exName) * total_kcal)
+    exercise_label.configure(text=("칼로리 소모 시간 : " + exName + " " + str(exTime) + "분"))
 
 
 # 윈도우 생성
@@ -65,7 +77,7 @@ win.geometry("1200x900")
 win.resizable(False, False)
 
 # 재료 DB 생성
-ing = {
+ing_dic = {
     "건두부": 252,
     "고기완자": 50,
     "국물": 500,
@@ -90,10 +102,25 @@ ing = {
 total_kcal = 0  # 총 칼로리의 합
 count_arr = [1, 3, 7, 8, 9, 14, 17, 18, 19]  # 단위가 개수인 재료들
 amout_arr = []  # 재료 양 저장하는 배열
-ing_name = list(ing.keys())  # 재료 이름들의 리스트
+ing_name = list(ing_dic.keys())  # 재료 이름들의 리스트
 init_img = PhotoImage(file="img/0.png")
 for i in range(len(ing_name)):
     amout_arr.append(1)
+
+# 운동 DB 생성
+exercise_dic = {
+    "달리기": 0.1,
+    "줄넘기": 0.3,
+    "권투": 0.07,
+    "자전거": 0.1,
+    "유도": 0.12,
+    "등산": 0.14,
+    "수영": 0.12,
+    "배구": 0.21,
+    "스트레칭": 0.33,
+    "필라테스": 0.26,
+}
+exercise_name = list(exercise_dic.keys())
 
 # 재료 사진칸 생성
 img_label = Label(
@@ -107,6 +134,7 @@ ing_text = Label(
     win,
     text="음식 선택",
     background="white",
+    foreground="black",
     borderwidth=1,
     relief="groove",
     font=menu_font,
@@ -166,6 +194,7 @@ kcal_label = Label(
     win,
     text=("총 칼로리 : " + str(total_kcal)),
     background="white",
+    foreground="black",
     borderwidth=1,
     relief="groove",
     font=menu_font2,
@@ -175,8 +204,9 @@ kcal_label.place(x=0, y=800, width=600, height=100)
 # 운동 시간
 exercise_label = Label(
     win,
-    text="소모 시간 : ",
+    text="칼로리 소모 시간 : ",
     background="white",
+    foreground="black",
     borderwidth=1,
     relief="groove",
     font=menu_font2,
