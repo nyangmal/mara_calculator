@@ -2,11 +2,22 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import font
 from typing import List
+import os
 import random
+
+# Pyinstaller 이미지 포함 함수
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
 
 # 재료 이미지 변경 함수
 def makeImg(i):
-    current_img = PhotoImage(file="img/" + str(i) + ".png")
+    current_img = PhotoImage(file=resource_path("img/" + str(i) + ".png"))
     img_label.configure(image=current_img)
     img_label.image = current_img
 
@@ -103,7 +114,7 @@ total_kcal = 0  # 총 칼로리의 합
 count_arr = [1, 3, 7, 8, 9, 14, 17, 18, 19]  # 단위가 개수인 재료들
 amout_arr = []  # 재료 양 저장하는 배열
 ing_name = list(ing_dic.keys())  # 재료 이름들의 리스트
-init_img = PhotoImage(file="img/0.png")
+init_img = PhotoImage(file=resource_path("img/0.png"))
 for i in range(len(ing_name)):
     amout_arr.append(1)
 
